@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GameLog: diário e avaliações de jogos com meia estrela e Like para os jogos que te divertem de verdade.">
+  <title>GameLog — Diário & Avaliações de Jogos</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90' fill='%2300f0ff'%3E◈%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <a href="#main" class="skip-link">Ir para o conteúdo</a>
+
+  <!-- Barra de Navegação -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand" data-tab="catalogo" aria-label="GameLog — ir para o catálogo">
+        <span class="brand-icon" aria-hidden="true">◈</span>
+        <span class="brand-text">GAME<span class="highlight">LOG</span></span>
+      </a>
+
+      <nav class="nav-links" aria-label="Navegação principal">
+        <button type="button" class="nav-btn active" data-tab="catalogo">Explorar Jogos</button>
+        <button type="button" class="nav-btn" data-tab="perfil">
+          Meu Perfil <span class="badge" id="wishlistBadge">0</span>
+        </button>
+      </nav>
+
+      <div class="user-box">
+        <label for="nicknameInput">Apelido:</label>
+        <input type="text" id="nicknameInput" value="PlayerOne" maxlength="18" placeholder="Seu apelido" autocomplete="off">
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="main">
+
+    <!-- ABA 1: CATÁLOGO -->
+    <section id="tab-catalogo" class="tab-content active">
+      <div class="hero-banner">
+        <div>
+          <h1>Avalie além da nota técnica.</h1>
+          <p>Dê de <strong>0,5 a 5 estrelas</strong> e use o <strong>Like (♥)</strong> para aqueles jogos nota 3 que te divertem mais que um nota 5.</p>
+        </div>
+        <div class="search-box">
+          <label for="searchInput" class="sr-only">Buscar jogo ou gênero</label>
+          <input type="search" id="searchInput" placeholder="Buscar jogo ou gênero..." autocomplete="off">
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2>Catálogo de Jogos</h2>
+          <span class="subtitle">Avalie títulos já lançados ou salve os próximos lançamentos na sua lista · <span id="resultCount">0 jogos</span></span>
+        </div>
+
+        <div class="toolbar">
+          <div class="filter-pills" role="group" aria-label="Filtrar por status">
+            <button type="button" class="filter-btn active" data-filter="all">Todos</button>
+            <button type="button" class="filter-btn" data-filter="released">Já Lançados</button>
+            <button type="button" class="filter-btn" data-filter="upcoming">Em Breve</button>
+          </div>
+
+          <label class="sort-box">
+            <span class="sr-only">Ordenar por</span>
+            <select id="sortSelect">
+              <option value="default">Ordem padrão</option>
+              <option value="rating">Maior nota</option>
+              <option value="likes">Mais curtidos</option>
+              <option value="title">Nome (A–Z)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div id="gamesGrid" class="games-grid"></div>
+      <p id="emptyState" class="empty-state hidden">Nenhum jogo encontrado. Tente outro termo ou mude o filtro.</p>
+    </section>
+
+    <!-- ABA 2: PERFIL -->
+    <section id="tab-perfil" class="tab-content">
+      <div class="profile-header">
+        <div class="avatar-wrap">
+          <div class="profile-avatar" id="profileAvatar">P</div>
+          <button type="button" id="changeAvatarBtn" class="avatar-edit-btn" aria-expanded="false" aria-label="Trocar foto de perfil" title="Trocar foto">📷</button>
+        </div>
+        <div class="profile-info">
+          <h2 id="profileNameDisplay">PlayerOne</h2>
+          <p>Membro da comunidade GameLog</p>
+        </div>
+        <div class="profile-stats">
+          <div class="stat-card">
+            <span class="stat-num" id="statRated">0</span>
+            <span class="stat-label">Avaliados</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num" id="statLiked">0</span>
+            <span class="stat-label">Curtidos (♥)</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num" id="statAvg">–</span>
+            <span class="stat-label">Sua média</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num" id="statWishlist">0</span>
+            <span class="stat-label">Quero Jogar</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="avatarUrlBox" class="image-url-box avatar-url-box hidden">
+        <input type="url" id="avatarUrlInput" placeholder="Cole aqui o endereço (https://...) da sua foto" aria-label="Endereço da foto de perfil">
+        <button type="button" id="saveAvatarBtn" class="btn-primary btn-sm">Salvar</button>
+        <button type="button" id="resetAvatarBtn" class="btn-outline btn-sm" title="Voltar para a inicial do apelido">Remover</button>
+      </div>
+
+      <div class="profile-columns">
+        <div class="profile-panel">
+          <h3>📌 Quero Jogar no Futuro</h3>
+          <div id="wishlistContainer" class="wishlist-list"></div>
+        </div>
+
+        <div class="profile-panel">
+          <h3>✍️ Minhas Resenhas</h3>
+          <div id="myReviewsContainer" class="reviews-feed"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL DE DETALHES E AVALIAÇÃO -->
+  <div id="gameModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <button type="button" class="modal-close" id="closeModalBtn" aria-label="Fechar">×</button>
+
+      <div class="modal-top">
+        <div class="modal-cover-wrapper">
+          <div class="modal-cover" id="modalCover"></div>
+          <button type="button" id="changeCoverBtn" class="btn-cover-edit" aria-expanded="false">
+            🖼️ Link da Imagem
+          </button>
+        </div>
+
+        <div class="modal-details">
+          <div class="modal-tags">
+            <span id="modalStatusTag" class="tag"></span>
+            <span id="modalGenre" class="tag"></span>
+          </div>
+          <h2 id="modalTitle">Título do Jogo</h2>
+          <p id="modalDesc" class="modal-desc"></p>
+
+          <div id="imageUrlBox" class="image-url-box hidden">
+            <input type="url" id="imageUrlInput" placeholder="Cole aqui o endereço (https://...) da imagem" aria-label="Endereço da imagem">
+            <button type="button" id="saveImageUrlBtn" class="btn-primary btn-sm">Salvar</button>
+            <button type="button" id="resetImageUrlBtn" class="btn-outline btn-sm" title="Voltar à imagem original">Restaurar</button>
+          </div>
+
+          <div class="metrics-bar">
+            <div class="metric-box" id="modalRatingMetric">
+              <span class="metric-title">Média Geral</span>
+              <div class="metric-value">
+                <span id="modalAvgRating">0,0</span> <span class="star-icon">★</span>
+                <small id="modalTotalVotes">(0 avaliações)</small>
+              </div>
+            </div>
+            <div class="metric-box" id="modalLikesMetric">
+              <span class="metric-title">Aprovação / Likes</span>
+              <div class="metric-value like-color">
+                ♥ <span id="modalTotalLikes">0</span>
+              </div>
+            </div>
+            <button type="button" id="modalWishlistBtn" class="btn-outline">+ Quero Jogar</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="upcomingNotice" class="upcoming-notice hidden">
+        ⏳ Este título ainda não foi lançado. Adicione-o à sua lista <strong>Quero Jogar</strong> para acompanhar quando estiver disponível para avaliação!
+      </div>
+
+      <div id="modalReviewArea" class="modal-body-grid">
+        <form id="reviewForm" class="review-form">
+          <h3 id="reviewFormTitle">Sua Avaliação</h3>
+
+          <div class="rating-controls">
+            <div class="star-picker-wrapper">
+              <span class="control-label" id="ratingLabel">Nota (0,5 a 5):</span>
+              <div class="star-row">
+                <div class="star-picker" id="starPicker" role="group" aria-labelledby="ratingLabel"></div>
+                <span id="selectedRatingText" class="rating-readout">0,0 ★</span>
+              </div>
+            </div>
+
+            <div class="like-picker-wrapper">
+              <span class="control-label">Divertiu?</span>
+              <button type="button" id="likeToggleBtn" class="like-btn" aria-pressed="false">
+                <span class="heart" aria-hidden="true">♥</span> <span id="likeBtnLabel">Dar Like</span>
+              </button>
+            </div>
+          </div>
+
+          <label for="reviewTextInput" class="control-label">Resenha curta:</label>
+          <textarea id="reviewTextInput" rows="3" maxlength="320" placeholder="Ex: Tem pontos fracos, mas me diverti demais do começo ao fim..."></textarea>
+          <small class="char-count"><span id="charCount">0</span>/320</small>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" id="submitReviewBtn">Publicar Avaliação</button>
+            <button type="button" class="btn-danger hidden" id="deleteMyReviewBtn">Excluir minha avaliação</button>
+          </div>
+        </form>
+
+        <div class="reviews-section">
+          <h3>Críticas & Resenhas</h3>
+          <div id="modalReviewsList" class="reviews-feed"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
